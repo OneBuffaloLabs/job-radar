@@ -1,10 +1,12 @@
 import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+
 from app.models.job import JobPosting
 from app.schemas.remotive import RemotiveAPIResponse
 
-REMOTIVE_URL = "https://remotive.com/api/remote-jobs" # Limiting to 50 for dev
+REMOTIVE_URL = "https://remotive.com/api/remote-jobs"  # Limiting to 50 for dev
+
 
 async def fetch_and_store_jobs(session: AsyncSession):
     # Fetch data from external API
@@ -28,7 +30,7 @@ async def fetch_and_store_jobs(session: AsyncSession):
             select(JobPosting).where(JobPosting.url == remote_job.url)
         )
         if existing_job.scalars().first():
-            continue # Skip if exists
+            continue  # Skip if exists
 
         # Map External Schema -> Internal DB Model
         new_job = JobPosting(
@@ -39,7 +41,7 @@ async def fetch_and_store_jobs(session: AsyncSession):
             salary_range=remote_job.salary if remote_job.salary else "Not specified",
             source="Remotive",
             date_posted=remote_job.publication_date,
-            is_active=True
+            is_active=True,
         )
 
         session.add(new_job)

@@ -1,16 +1,20 @@
 import asyncio
+
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
+
 from app.core.celery_app import celery_app
 from app.core.config import settings
 from app.services.ingestion import fetch_and_store_jobs
+
 
 @celery_app.task
 def ingest_jobs_task():
     """
     Synchronous Celery task that wraps the async ingestion logic.
     """
+
     async def _async_runner():
         # 1. Create a fresh engine specifically for this task execution.
         # We use NullPool to prevent connection pooling issues across different event loops.
@@ -18,7 +22,7 @@ def ingest_jobs_task():
             settings.DATABASE_URL,
             echo=True,  # Set to False in production to reduce log noise
             future=True,
-            poolclass=NullPool
+            poolclass=NullPool,
         )
 
         # 2. Create a session factory using this fresh engine

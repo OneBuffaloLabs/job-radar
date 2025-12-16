@@ -1,10 +1,12 @@
+from unittest.mock import patch
+
 import pytest
 import respx
-from unittest.mock import patch
 from httpx import Response
 from sqlalchemy import select
+
 from app.models.job import JobPosting
-from app.services.ingestion import fetch_and_store_jobs, REMOTIVE_URL
+from app.services.ingestion import REMOTIVE_URL, fetch_and_store_jobs
 
 # Define a fake job payload that matches Remotive's structure
 MOCK_REMOTIVE_DATA = {
@@ -18,10 +20,11 @@ MOCK_REMOTIVE_DATA = {
             "publication_date": "2024-01-01T12:00:00",
             "candidate_required_location": "Konoha",
             "salary": "$100k - $150k",
-            "job_type": "full_time"
+            "job_type": "full_time",
         }
-    ]
+    ],
 }
+
 
 @pytest.mark.asyncio
 async def test_fetch_and_store_jobs_service(db_session):
@@ -50,6 +53,7 @@ async def test_fetch_and_store_jobs_service(db_session):
         assert jobs[0].company == "Hidden Leaf Village"
         assert jobs[0].source == "Remotive"
 
+
 @pytest.mark.asyncio
 async def test_ingest_endpoint(client, db_session):
     """
@@ -75,6 +79,7 @@ async def test_ingest_endpoint(client, db_session):
 
         # Verify the task was actually called
         mock_task.assert_called_once()
+
 
 @pytest.mark.asyncio
 async def test_ingest_idempotency(db_session):

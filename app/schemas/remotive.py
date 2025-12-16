@@ -1,6 +1,8 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional
+
 from pydantic import BaseModel, Field
+
 
 # This matches the shape of a single job object from Remotive's API
 class RemotiveJobSchema(BaseModel):
@@ -15,6 +17,7 @@ class RemotiveJobSchema(BaseModel):
 
     class Config:
         extra = "ignore"
+
 
 # This matches the top-level response from Remotive
 class RemotiveAPIResponse(BaseModel):

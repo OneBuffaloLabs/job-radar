@@ -1,11 +1,12 @@
 from celery import Celery
-from celery.schedules import crontab # Import crontab
+from celery.schedules import crontab
+
 from app.core.config import settings
 
 celery_app = Celery(
     "job_radar_worker",
     broker=settings.CELERY_BROKER_URL,
-    backend=settings.CELERY_BROKER_URL
+    backend=settings.CELERY_BROKER_URL,
 )
 
 celery_app.conf.update(
@@ -20,7 +21,7 @@ celery_app.conf.update(
 celery_app.conf.beat_schedule = {
     "ingest-jobs-every-hour": {
         "task": "app.tasks.ingest_jobs_task",
-        "schedule": crontab(minute=0, hour="*"), # Runs every hour on the hour
+        "schedule": crontab(minute=0, hour="*"),  # Runs every hour on the hour
         # For testing, you can change it to:
         # "schedule": 60.0, # Runs every 60 seconds
     },
