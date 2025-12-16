@@ -23,8 +23,11 @@ reboot: down up
 # Rebuilds containers without stopping the Docker Engine (Faster)
 rebuild:
 	@echo "Rebuilding containers..."
+	rm -f poetry.lock
 	sudo docker compose down
 	sudo docker compose up --build -d
+	@echo "Generating new lock file..."
+	sudo docker compose exec web poetry lock
 	@echo "Rebuild complete! 🛠️"
 
 # View live logs from the python app

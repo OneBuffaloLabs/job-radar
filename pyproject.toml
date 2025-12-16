@@ -2,7 +2,7 @@
 name = "job-radar"
 version = "0.1.0"
 description = "High-performance job aggregation engine"
-authors = ["Andrew Elbaneh <andrew@onebuffalolabs.com>"]
+authors = ["Andrew Elbaneh <onebuffalolabs@gmail.com>"]
 readme = "README.md"
 package-mode = false
 
@@ -18,8 +18,8 @@ httpx = "^0.27.0"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
 ruff = "^0.3.0"
-# UPDATED: Set to a recent version that supports loop_scope config
 pytest-asyncio = "^0.25.0"
+respx = "^0.22.0"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
