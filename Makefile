@@ -17,6 +17,16 @@ down:
 	sudo systemctl stop docker
 	@echo "System is resting. 💤"
 
+# Full system reboot: Stops Docker engine, then starts everything fresh
+reboot: down up
+
+# Rebuilds containers without stopping the Docker Engine (Faster)
+rebuild:
+	@echo "Rebuilding containers..."
+	sudo docker compose down
+	sudo docker compose up --build -d
+	@echo "Rebuild complete! 🛠️"
+
 # View live logs from the python app
 logs:
 	sudo docker compose logs -f web

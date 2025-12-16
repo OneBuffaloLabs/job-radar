@@ -19,6 +19,8 @@ This project serves as an architectural reference for building scalable Python b
 - **Framework:** FastAPI (Async/Await)
 - **Database:** PostgreSQL 15 (via Docker)
 - **ORM:** SQLModel (SQLAlchemy + Pydantic)
+- **HTTP Client:** HTTPX (Async)
+- **Migrations:** Alembic
 - **Dependency Management:** Poetry
 - **Linting/Formatting:** Ruff
 
@@ -33,7 +35,7 @@ This project uses a containerized development environment. You do not need Pytho
 
 ### Quick Start
 
-The project includes a `Makefile` to handle the lifecycle of the application and the Docker daemon (to save resources when not in use).
+The project includes a `Makefile` to handle the lifecycle of the application and the Docker daemon.
 
 1.  **Clone the repository**
 
@@ -57,48 +59,55 @@ The project includes a `Makefile` to handle the lifecycle of the application and
     ```
 
 4.  **Access the API**
-
     - **API Root:** [http://localhost:8000](http://localhost:8000)
     - **Interactive Docs (Swagger UI):** [http://localhost:8000/docs](http://localhost:8000/docs)
     - **ReDoc:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
-5.  **Run Tests**
-    To run the test suite and save the output to a log file for review:
+### Developer Command Reference
 
-    ```bash
-    make test | tee test_output.log
-    ```
+We use `make` to abstract complex Docker Compose commands.
 
-### Stopping the Environment
+| Command        | Description                                                             |
+| :------------- | :---------------------------------------------------------------------- |
+| `make up`      | Start Docker Engine and boot up containers.                             |
+| `make down`    | Stop containers and **stop Docker Engine** (saves battery/RAM).         |
+| `make logs`    | Tail the logs of the running web container.                             |
+| `make restart` | Restart the web container (use after code changes).                     |
+| `make rebuild` | Rebuild containers (use after adding dependencies in `pyproject.toml`). |
+| `make reboot`  | Full system cycle: Stops Docker Engine, then starts fresh.              |
+| `make test`    | Run the automated test suite (`pytest`).                                |
+| `make shell`   | Open a bash shell inside the running container.                         |
 
-To stop the containers and **shut down the Docker Engine** (preserving system RAM):
-
-```bash
-make down
-
-```
-
-##📂 Project Structure
+## 📂 Project Structure
 
 ```text
 /
 ├── app/
-│ ├── api/ # Route controllers
-│ ├── core/ # App configuration
-│ ├── models/ # SQLModel database schemas
-│ └── main.py # Application entry point
-├── pyproject.toml # Poetry dependencies
-├── docker-compose.yml # Infrastructure definition
-└── Makefile # Command shortcuts
+│   ├── api/          # Route controllers
+│   ├── core/         # App configuration & Database setup
+│   ├── models/       # Internal Database Models (SQLModel)
+│   ├── schemas/      # External Data Schemas (Pydantic)
+│   ├── services/     # Business Logic & Ingestion Engine
+│   └── main.py       # Application entry point
+├── pyproject.toml    # Poetry dependencies
+├── docker-compose.yml# Infrastructure definition
+└── Makefile          # Command shortcuts
 ```
 
-##🧪 Development\* **Hot Reloading:** The `web` container mounts the local directory, so changes to `app/` are reflected immediately.
+##🧪 DevelopmentThe project is configured for rapid iteration.
 
-- **Linting:** The project uses `ruff` for linting.
+- **Hot Reloading:** The `web` container mounts the local directory, so changes to `app/` are reflected immediately.
+- **Linting & Formatting:** We use `ruff` to enforce code quality.
 
 ```bash
-# Run linter inside container
-docker compose exec web ruff check .
+# Check for linting errors
+make lint
+
+# Auto-fix linting errors (imports, unused variables)
+make fix
+
+# Auto-format code (spacing, quotes)
+make format
 ```
 
 ---
