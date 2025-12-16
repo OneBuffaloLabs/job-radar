@@ -34,6 +34,18 @@ rebuild:
 logs:
 	sudo docker compose logs -f web
 
+# View live logs from the background worker
+worker-logs:
+	sudo docker compose logs -f worker
+
+# View live logs from the beat scheduler
+beat-logs:
+	sudo docker compose logs -f celery-beat
+
+# View ALL logs (useful for seeing the interaction between api and worker)
+logs-all:
+	sudo docker compose logs -f
+
 # Quick restart of just the containers (keeps Docker Engine running)
 restart:
 	sudo docker compose restart web

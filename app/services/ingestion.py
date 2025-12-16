@@ -4,7 +4,7 @@ from sqlalchemy.future import select
 from app.models.job import JobPosting
 from app.schemas.remotive import RemotiveAPIResponse
 
-REMOTIVE_URL = "https://remotive.com/api/remote-jobs?limit=50" # Limiting to 50 for dev
+REMOTIVE_URL = "https://remotive.com/api/remote-jobs" # Limiting to 50 for dev
 
 async def fetch_and_store_jobs(session: AsyncSession):
     # Fetch data from external API

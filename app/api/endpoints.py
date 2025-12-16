@@ -6,7 +6,7 @@ from sqlmodel import select
 
 from app.core.db import get_session
 from app.models.job import JobPosting
-from app.services.ingestion import fetch_and_store_jobs
+from app.tasks import ingest_jobs_task
 
 router = APIRouter()
 
@@ -56,12 +56,13 @@ async def get_job(job_id: int, session: AsyncSession = Depends(get_session)):
 
 # INGESTION (Trigger)
 @router.post("/jobs/ingest")
-async def ingest_jobs(session: AsyncSession = Depends(get_session)):
+async def ingest_jobs():
     """
     Trigger the background ingestion of jobs from Remotive.
+    Returns immediately with a task ID.
     """
-    try:
-        count = await fetch_and_store_jobs(session)
-        return {"message": f"Ingestion complete. Added {count} new jobs."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Ingestion failed: {str(e)}")
+    # Trigger the Celery task
+    task = ingest_jobs_task.delay()
+
+    # Respond immediately
+    return {"message": "Ingestion started in background", "task_id": task.id}

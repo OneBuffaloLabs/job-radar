@@ -1,5 +1,6 @@
 import pytest
 import respx
+from unittest.mock import patch
 from httpx import Response
 from sqlalchemy import select
 from app.models.job import JobPosting
@@ -28,16 +29,16 @@ async def test_fetch_and_store_jobs_service(db_session):
     Unit test for the ingestion service logic.
     Mocks the external API and verifies DB insertion.
     """
-    # 1. Mock the Remotive API to return our fake data
+    # Use the exact URL from the service to ensure we catch the request
     with respx.mock(base_url="https://remotive.com") as respx_mock:
-        respx_mock.get("/api/remote-jobs", name="remotive").mock(
+        respx_mock.get(REMOTIVE_URL).mock(
             return_value=Response(200, json=MOCK_REMOTIVE_DATA)
         )
 
-        # 2. Call the service function directly
+        # Call the service function directly
         count = await fetch_and_store_jobs(db_session)
 
-        # 3. Assertions
+        # Assertions
         assert count == 1
 
         # Verify data is actually in the DB
@@ -53,20 +54,27 @@ async def test_fetch_and_store_jobs_service(db_session):
 async def test_ingest_endpoint(client, db_session):
     """
     Integration test for the /jobs/ingest endpoint.
-    Ensures the API route connects to the service correctly.
+    Since the endpoint now offloads to Celery, we mock the task.delay() call
+    instead of mocking the HTTP API.
     """
-    with respx.mock(base_url="https://remotive.com") as respx_mock:
-        respx_mock.get("/api/remote-jobs").mock(
-            return_value=Response(200, json=MOCK_REMOTIVE_DATA)
-        )
+    # Patch the Celery task where it is IMPORTED in the endpoints file
+    with patch("app.api.endpoints.ingest_jobs_task.delay") as mock_task:
+        # Mock the return value of .delay() (which is an AsyncResult)
+        mock_task.return_value.id = "test-task-id-123"
 
         # 1. Hit the endpoint
         response = await client.post("/api/jobs/ingest")
 
         # 2. Verify response
         assert response.status_code == 200
-        assert "Ingestion complete" in response.json()["message"]
-        assert "Added 1 new jobs" in response.json()["message"]
+        data = response.json()
+
+        # Expect the new async message
+        assert "Ingestion started in background" in data["message"]
+        assert data["task_id"] == "test-task-id-123"
+
+        # Verify the task was actually called
+        mock_task.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_ingest_idempotency(db_session):
@@ -74,7 +82,8 @@ async def test_ingest_idempotency(db_session):
     Ensure running ingestion twice doesn't create duplicate jobs.
     """
     with respx.mock(base_url="https://remotive.com") as respx_mock:
-        respx_mock.get("/api/remote-jobs").mock(
+        # Catch ANY request to the Remotive URL
+        respx_mock.get(REMOTIVE_URL).mock(
             return_value=Response(200, json=MOCK_REMOTIVE_DATA)
         )
 
