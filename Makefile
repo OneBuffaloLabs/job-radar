@@ -32,3 +32,15 @@ shell:
 # Run the automated test suite
 test:
 	sudo docker compose exec web python -m pytest -v
+
+# Run static code analysis to find errors and style violations
+lint:
+	sudo docker compose exec web python -m ruff check .
+
+# Auto-format code (adjusts spacing, indentation, and quotes)
+format:
+	sudo docker compose exec web python -m ruff format .
+
+# Auto-fix linting issues (sorts imports, removes unused variables)
+fix:
+	sudo docker compose exec web python -m ruff check --fix .

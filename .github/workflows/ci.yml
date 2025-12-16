@@ -25,10 +25,14 @@ jobs:
       - name: Wait for DB initialization
         run: sleep 10
 
-      # 4. Run the Test Suite
+      # 4. Run Linter (Fail fast on style errors)
+      - name: Lint Code
+        run: make lint
+
+      # 5. Run the Test Suite
       - name: Run Tests
         run: make test
 
-      # 5. Clean up (Optional, but good practice)
+      # 6. Clean up (Optional, but good practice)
       - name: Teardown
         run: make down

@@ -1,6 +1,8 @@
-from typing import Optional
 from datetime import datetime
+from typing import Optional
+
 from sqlmodel import Field, SQLModel
+
 
 class JobPosting(SQLModel, table=True):
     __tablename__ = "job_postings"
