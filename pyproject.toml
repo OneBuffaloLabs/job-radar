@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "job-radar"
+version = "0.1.0"
+description = "High-performance job aggregation engine"
+authors = ["Andrew Elbaneh <andrew@onebuffalolabs.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = {extras = ["standard"], version = "^0.112.0"}
+sqlmodel = "^0.0.16"
+asyncpg = "^0.29.0"
+alembic = "^1.13.1"
+pydantic-settings = "^2.2.1"
+httpx = "^0.27.0"  # For making async HTTP requests (scraping)
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+ruff = "^0.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+# Configuration for Ruff (Linter)
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]  # Enable errors, pyflakes, and isort (import sorting)
