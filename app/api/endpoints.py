@@ -6,6 +6,7 @@ from sqlmodel import select
 
 from app.core.db import get_session
 from app.models.job import JobPosting
+from app.services.ingestion import fetch_and_store_jobs
 
 router = APIRouter()
 
@@ -51,3 +52,16 @@ async def get_job(job_id: int, session: AsyncSession = Depends(get_session)):
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
     return job
+
+
+# INGESTION (Trigger)
+@router.post("/jobs/ingest")
+async def ingest_jobs(session: AsyncSession = Depends(get_session)):
+    """
+    Trigger the background ingestion of jobs from Remotive.
+    """
+    try:
+        count = await fetch_and_store_jobs(session)
+        return {"message": f"Ingestion complete. Added {count} new jobs."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ingestion failed: {str(e)}")
