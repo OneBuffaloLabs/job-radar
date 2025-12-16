@@ -13,8 +13,8 @@ up:
 down:
 	@echo "Stopping containers..."
 	sudo docker compose down
-	@echo "Stopping Docker Service..."
-	sudo systemctl stop docker
+	@echo "Stopping Docker Service and Socket..."
+	sudo systemctl stop docker docker.socket
 	@echo "System is resting. 💤"
 
 # Full system reboot: Stops Docker engine, then starts everything fresh
