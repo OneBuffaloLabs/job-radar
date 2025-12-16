@@ -170,7 +170,3 @@ _Built by [@bana0615](https://www.google.com/search?q=https://github.com/bana061
 
 **License**
 [MIT](https://www.google.com/search?q=LICENSE)
-
-```
-
-```
