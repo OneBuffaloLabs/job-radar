@@ -6,10 +6,12 @@
 [![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.112-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
+[![Celery](https://img.shields.io/badge/celery-%2337814A.svg?style=for-the-badge&logo=celery&logoColor=white)](https://docs.celeryq.dev/)
 
 ## 📖 About
 
-Job Radar is an asynchronous microservice designed to aggregate, normalize, and serve job posting data from multiple sources. It leverages modern Python type systems for validation and uses an event-driven architecture for data ingestion.
+Job Radar is an asynchronous microservice designed to aggregate, normalize, and serve job posting data from multiple sources. It leverages modern Python type systems for validation and uses a distributed producer-consumer architecture for data ingestion. Heavy lifting (scraping) is offloaded to background Celery workers backed by Redis, ensuring the API remains non-blocking and responsive.
 
 This project serves as an architectural reference for building scalable Python backends using **FastAPI** and **SQLModel**.
 
@@ -19,6 +21,8 @@ This project serves as an architectural reference for building scalable Python b
 - **Framework:** FastAPI (Async/Await)
 - **Database:** PostgreSQL 15 (via Docker)
 - **ORM:** SQLModel (SQLAlchemy + Pydantic)
+- **Task Queue:** Celery
+- **Message Broker:** Redis
 - **HTTP Client:** HTTPX (Async)
 - **Migrations:** Alembic
 - **Dependency Management:** Poetry
@@ -67,16 +71,19 @@ The project includes a `Makefile` to handle the lifecycle of the application and
 
 We use `make` to abstract complex Docker Compose commands.
 
-| Command        | Description                                                             |
-| :------------- | :---------------------------------------------------------------------- |
-| `make up`      | Start Docker Engine and boot up containers.                             |
-| `make down`    | Stop containers and **stop Docker Engine** (saves battery/RAM).         |
-| `make logs`    | Tail the logs of the running web container.                             |
-| `make restart` | Restart the web container (use after code changes).                     |
-| `make rebuild` | Rebuild containers (use after adding dependencies in `pyproject.toml`). |
-| `make reboot`  | Full system cycle: Stops Docker Engine, then starts fresh.              |
-| `make test`    | Run the automated test suite (`pytest`).                                |
-| `make shell`   | Open a bash shell inside the running container.                         |
+| Command            | Description                                                             |
+| :----------------- | :---------------------------------------------------------------------- |
+| `make up`          | Start Docker Engine and boot up containers.                             |
+| `make down`        | Stop containers and **stop Docker Engine** (saves battery/RAM).         |
+| `make logs`        | Tail the logs of the API container (HTTP traffic).                      |
+| `make worker-logs` | Tail the logs of the Celery Worker (Ingestion tasks).                   |
+| `make beat-logs`   | Tail the logs of the Scheduler (Cron triggers).                         |
+| `make logs-all`    | Tail logs from ALL services at once.                                    |
+| `make restart`     | Restart the web container (use after code changes).                     |
+| `make rebuild`     | Rebuild containers (use after adding dependencies in `pyproject.toml`). |
+| `make reboot`      | Full system cycle: Stops Docker Engine, then starts fresh.              |
+| `make test`        | Run the automated test suite (`pytest`).                                |
+| `make shell`       | Open a bash shell inside the running container.                         |
 
 ## 📂 Project Structure
 
@@ -88,6 +95,7 @@ We use `make` to abstract complex Docker Compose commands.
 │   ├── models/       # Internal Database Models (SQLModel)
 │   ├── schemas/      # External Data Schemas (Pydantic)
 │   ├── services/     # Business Logic & Ingestion Engine
+│   ├── tasks.py      # Celery Task Definitions (Worker entry point)
 │   └── main.py       # Application entry point
 ├── pyproject.toml    # Poetry dependencies
 ├── docker-compose.yml# Infrastructure definition
