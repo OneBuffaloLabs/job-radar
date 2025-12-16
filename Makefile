@@ -28,3 +28,7 @@ restart:
 # Open a shell inside the running python container (for debugging)
 shell:
 	sudo docker compose exec web bash
+
+# Run the automated test suite
+test:
+	sudo docker compose exec web python -m pytest -v

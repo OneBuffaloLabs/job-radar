@@ -2,6 +2,7 @@
 
 > **High-performance job aggregation engine built with FastAPI, SQLAlchemy, and AsyncIO.**
 
+![CI Status](https://github.com/OneBuffaloLabs/job-radar/actions/workflows/ci.yml/badge.svg)
 [![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.112-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
@@ -56,9 +57,17 @@ The project includes a `Makefile` to handle the lifecycle of the application and
     ```
 
 4.  **Access the API**
+
     - **API Root:** [http://localhost:8000](http://localhost:8000)
     - **Interactive Docs (Swagger UI):** [http://localhost:8000/docs](http://localhost:8000/docs)
     - **ReDoc:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
+
+5.  **Run Tests**
+    To run the test suite and save the output to a log file for review:
+
+    ```bash
+    make test | tee test_output.log
+    ```
 
 ### Stopping the Environment
 
@@ -69,7 +78,9 @@ make down
 
 ```
 
-##📂 Project Structure```text
+##📂 Project Structure
+
+```text
 /
 ├── app/
 │ ├── api/ # Route controllers
@@ -79,16 +90,16 @@ make down
 ├── pyproject.toml # Poetry dependencies
 ├── docker-compose.yml # Infrastructure definition
 └── Makefile # Command shortcuts
+```
 
-````
+##🧪 Development\* **Hot Reloading:** The `web` container mounts the local directory, so changes to `app/` are reflected immediately.
 
-##🧪 Development* **Hot Reloading:** The `web` container mounts the local directory, so changes to `app/` are reflected immediately.
-* **Linting:** The project uses `ruff` for linting.
+- **Linting:** The project uses `ruff` for linting.
+
 ```bash
 # Run linter inside container
 docker compose exec web ruff check .
-
-````
+```
 
 ---
 

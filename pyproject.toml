@@ -13,20 +13,32 @@ sqlmodel = "^0.0.16"
 asyncpg = "^0.29.0"
 alembic = "^1.13.1"
 pydantic-settings = "^2.2.1"
-httpx = "^0.27.0"  # For making async HTTP requests (scraping)
+httpx = "^0.27.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
 ruff = "^0.3.0"
+# UPDATED: Set to a recent version that supports loop_scope config
+pytest-asyncio = "^0.25.0"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+# This setting aligns the loop scope with your fixtures to prevent "attached to different loop" errors
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+    # Suppress noise from asyncpg/sqlalchemy during cleanup if tests are passing
+    "ignore:.*Task attached to a different loop.*:RuntimeWarning"
+]
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-# Configuration for Ruff (Linter)
 [tool.ruff]
 line-length = 88
 target-version = "py312"
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]  # Enable errors, pyflakes, and isort (import sorting)
+select = ["E", "F", "I"]

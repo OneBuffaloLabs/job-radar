@@ -1,0 +1,34 @@
+name: CI Pipeline
+
+# Trigger on push to main or any pull request
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Build and Start Containers (using your Makefile)
+      - name: Start Environment
+        run: make up
+
+      # 3. Wait for Postgres to be ready
+      # (In a complex app we'd use a healthcheck, but sleep is fine for an MVP)
+      - name: Wait for DB initialization
+        run: sleep 10
+
+      # 4. Run the Test Suite
+      - name: Run Tests
+        run: make test
+
+      # 5. Clean up (Optional, but good practice)
+      - name: Teardown
+        run: make down
