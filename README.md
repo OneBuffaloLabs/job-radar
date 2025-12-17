@@ -169,4 +169,4 @@ make format
 _Built by [@bana0615](https://www.google.com/search?q=https://github.com/bana0615) as an experimental tool for [One Buffalo Labs](https://github.com/OneBuffaloLabs)._
 
 **License**
-[MIT](https://www.google.com/search?q=LICENSE)
+[MIT](https://www.google.com/search?q=LICENSE) - Copyright (c) 2025 One Buffalo Labs
