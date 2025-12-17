@@ -90,12 +90,5 @@ I wrote a `Makefile` so I wouldn't have to remember Docker Compose flags.
 
 ---
 
-<<<<<<< HEAD
-_Built by [@bana0615](https://www.google.com/search?q=https://github.com/bana0615) as an experimental tool for [One Buffalo Labs](https://github.com/OneBuffaloLabs)._
-
-**License**
-[MIT](https://www.google.com/search?q=LICENSE) - Copyright (c) 2025 One Buffalo Labs
-=======
 _Built by **Andrew Elbaneh** @ [One Buffalo Labs](https://onebuffalolabs.com)._
 **License** [MIT](https://www.google.com/search?q=LICENSE)
->>>>>>> f1cc89d (docs: refactor README for portfolio context)
